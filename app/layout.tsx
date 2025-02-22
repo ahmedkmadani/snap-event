@@ -30,8 +30,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${playfair.variable} ${lato.variable} font-sans antialiased`}>
+        <div className="memory-background-pattern" />
+        <div className="memory-sparkle" style={{ top: '10%', left: '20%' }} />
+        <div className="memory-sparkle" style={{ top: '30%', left: '70%' }} />
+        <div className="memory-sparkle" style={{ top: '70%', left: '30%' }} />
+        <div className="memory-sparkle" style={{ top: '80%', left: '80%' }} />
         <AuthProvider>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen flex flex-col relative z-10">
             <Navbar />
             <main className="flex-1">
               {children}
