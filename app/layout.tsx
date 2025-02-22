@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
-import { Lato } from "next/font/google";
+import { Playfair_Display, Lato } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from '@/lib/context/AuthContext';
 import Navbar from './components/Navbar';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-playfair',
+});
 
 const lato = Lato({
   weight: ['100', '300', '400', '700', '900'],
@@ -23,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lato.variable} font-sans antialiased`}>
+      <body className={`${playfair.variable} ${lato.variable} font-sans antialiased`}>
         <AuthProvider>
           <div className="min-h-screen flex flex-col">
             <Navbar />

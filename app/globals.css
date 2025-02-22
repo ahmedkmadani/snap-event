@@ -11,11 +11,11 @@
 /* Base styles */
 @layer base {
   body {
-    @apply text-gray-900 bg-gray-50;
+    @apply text-gray-900 bg-gray-50 font-sans;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-bold;
+    @apply font-serif font-bold;
   }
 
   p {
@@ -47,7 +47,9 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
+    --font-sans: 'var(--font-lato)';
+    --font-serif: 'var(--font-playfair)';
   }
   .dark {
     --background: 240 10% 3.9%;

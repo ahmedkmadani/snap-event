@@ -57,6 +57,7 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		fontFamily: {
+  			display: ['var(--font-playfair)'],
   			sans: ['var(--font-lato)'],
   		},
   	}
