@@ -108,8 +108,9 @@ export default function UploadPhoto() {
         i === fileIndex ? { ...f, uploading: false, completed: true, progress: 100 } : f
       ));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Upload failed';
       setUploadingFiles(prev => prev.map((f, i) => 
-        i === fileIndex ? { ...f, uploading: false, error: 'Upload failed' } : f
+        i === fileIndex ? { ...f, uploading: false, error: errorMessage } : f
       ));
     }
   };
