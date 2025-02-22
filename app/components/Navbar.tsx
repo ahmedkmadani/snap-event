@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -10,7 +10,9 @@ import { auth } from '@/lib/firebase';
 export default function Navbar() {
   const { user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleLogout = async () => {
     try {
@@ -21,7 +23,16 @@ export default function Navbar() {
     }
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    // Emit a custom event that the events page can listen to
+    const searchEvent = new CustomEvent('searchUpdate', { detail: e.target.value });
+    window.dispatchEvent(searchEvent);
+  };
+
   if (!user) return null;
+
+  const showSearch = pathname === '/events';
 
   return (
     <nav className="bg-white shadow-sm">
@@ -44,6 +55,18 @@ export default function Navbar() {
               My Events
             </Link>
             
+            {showSearch && (
+              <div className="ml-4 relative w-64">
+                <input
+                  type="text"
+                  placeholder="Search events..."
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                />
+              </div>
+            )}
+
             <Link
               href="/create-event"
               className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"

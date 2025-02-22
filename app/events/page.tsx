@@ -35,7 +35,6 @@ export default function EventsList() {
   const router = useRouter();
   const [events, setEvents] = useState<EventWithPhotos[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -48,6 +47,18 @@ export default function EventsList() {
       fetchEvents();
     }
   }, [user, loading]);
+
+  // Listen for search updates from the navbar
+  useEffect(() => {
+    const handleSearchUpdate = (e: CustomEvent<string>) => {
+      setSearchTerm(e.detail);
+    };
+
+    window.addEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    return () => {
+      window.removeEventListener('searchUpdate', handleSearchUpdate as EventListener);
+    };
+  }, []);
 
   const fetchEvents = async () => {
     if (!user) return;
@@ -71,58 +82,30 @@ export default function EventsList() {
     }
   };
 
-  const fetchEventPhotos = async (eventId: string) => {
-    try {
-      const photosQuery = query(
-        collection(db, 'events', eventId, 'photos'),
-        orderBy('uploadedAt', 'desc')
-      );
-      const querySnapshot = await getDocs(photosQuery);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as EventPhoto[];
-    } catch (error) {
-      console.error('Error fetching photos:', error);
-      return [];
-    }
-  };
-
-  const handleViewPhotos = async (event: EventWithPhotos) => {
-    // Remove the modal-related state and photo fetching logic
-  };
-
   const handleDownloadQR = (event: EventWithPhotos) => {
-    // Create a canvas element
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
     canvas.width = 1000;
     canvas.height = 1000;
 
-    // Create an SVG string
     const svgString = `
       <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
         ${document.getElementById(`qr-${event.id}`)?.innerHTML}
       </svg>
     `;
 
-    // Create an image from the SVG
     const img = new Image();
     const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
     const svgUrl = URL.createObjectURL(svgBlob);
 
     img.onload = () => {
-      // Fill white background
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Draw the QR code
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // Convert to PNG and download
       const pngUrl = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
       downloadLink.href = pngUrl;
@@ -137,12 +120,9 @@ export default function EventsList() {
   };
 
   const filteredEvents = events.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (filter === 'all') return matchesSearch;
-    return event.eventType === filter && matchesSearch;
+    return event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           event.location.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   if (loading || isLoading) {
@@ -177,30 +157,6 @@ export default function EventsList() {
 
         {events.length > 0 ? (
           <>
-            <div className="mb-8 space-y-4 sm:space-y-0 sm:flex sm:items-center sm:space-x-4">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="Search events..."
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="sm:w-48">
-                <select
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                >
-                  <option value="all">All Types</option>
-                  {Array.from(new Set(events.map(event => event.eventType))).map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredEvents.map((event) => (
                 <div key={event.id} className="bg-white rounded-xl shadow-sm p-6 sm:p-8 flex flex-col">
@@ -283,7 +239,7 @@ export default function EventsList() {
 
             {filteredEvents.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No events found matching your criteria</p>
+                <p className="text-gray-500 text-lg">No events found matching your search</p>
               </div>
             )}
           </>
