@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { collection, query, orderBy, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Link from 'next/link';
+import PageBackground from '../../../components/PageBackground';
 
 type EventPhoto = {
   id: string;
@@ -170,147 +171,153 @@ export default function GalleryPage() {
 
   if (viewMode === 'fullscreen') {
     return (
-      <div className="fixed inset-0 bg-black z-50">
-        {/* Top Bar */}
-        <div className="absolute top-0 left-0 right-0 bg-black bg-opacity-50 p-4 flex justify-between items-center">
-          <div className="text-white">
-            {currentPhotoIndex + 1} / {photos.length}
+      <>
+        <PageBackground pageType="gallery" />
+        <div className="fixed inset-0 bg-black z-50">
+          {/* Top Bar */}
+          <div className="absolute top-0 left-0 right-0 bg-black bg-opacity-50 p-4 flex justify-between items-center">
+            <div className="text-white">
+              {currentPhotoIndex + 1} / {photos.length}
+            </div>
+            <button
+              onClick={closeFullscreen}
+              className="text-white hover:text-gray-300 p-2"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <button
-            onClick={closeFullscreen}
-            className="text-white hover:text-gray-300 p-2"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
 
-        {/* Main Image */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <button
-            onClick={() => navigatePhoto('prev')}
-            className="absolute left-4 text-white hover:text-gray-300 bg-black bg-opacity-50 p-2 rounded-full transition-opacity opacity-50 hover:opacity-100"
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <img
-            src={photos[currentPhotoIndex].url}
-            alt="Full screen view"
-            className="max-h-[calc(100vh-200px)] max-w-screen-lg object-contain"
-          />
-          <button
-            onClick={() => navigatePhoto('next')}
-            className="absolute right-4 text-white hover:text-gray-300 bg-black bg-opacity-50 p-2 rounded-full transition-opacity opacity-50 hover:opacity-100"
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+          {/* Main Image */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <button
+              onClick={() => navigatePhoto('prev')}
+              className="absolute left-4 text-white hover:text-gray-300 bg-black bg-opacity-50 p-2 rounded-full transition-opacity opacity-50 hover:opacity-100"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <img
+              src={photos[currentPhotoIndex].url}
+              alt="Full screen view"
+              className="max-h-[calc(100vh-200px)] max-w-screen-lg object-contain"
+            />
+            <button
+              onClick={() => navigatePhoto('next')}
+              className="absolute right-4 text-white hover:text-gray-300 bg-black bg-opacity-50 p-2 rounded-full transition-opacity opacity-50 hover:opacity-100"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
 
-        {/* Bottom Slider */}
-        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4">
-          <div className="max-w-screen-lg mx-auto">
-            <div className="flex space-x-2 overflow-x-auto py-2 px-4 scrollbar-hide">
-              {photos.map((photo, index) => (
-                <button
-                  key={photo.id}
-                  onClick={() => setCurrentPhotoIndex(index)}
-                  className={`flex-shrink-0 relative w-20 h-20 rounded-lg overflow-hidden transition-all ${
-                    currentPhotoIndex === index ? 'ring-2 ring-white scale-105' : 'opacity-50 hover:opacity-75'
-                  }`}
-                >
-                  <img
-                    src={photo.url}
-                    alt={`Thumbnail ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
+          {/* Bottom Slider */}
+          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4">
+            <div className="max-w-screen-lg mx-auto">
+              <div className="flex space-x-2 overflow-x-auto py-2 px-4 scrollbar-hide">
+                {photos.map((photo, index) => (
+                  <button
+                    key={photo.id}
+                    onClick={() => setCurrentPhotoIndex(index)}
+                    className={`flex-shrink-0 relative w-20 h-20 rounded-lg overflow-hidden transition-all ${
+                      currentPhotoIndex === index ? 'ring-2 ring-white scale-105' : 'opacity-50 hover:opacity-75'
+                    }`}
+                  >
+                    <img
+                      src={photo.url}
+                      alt={`Thumbnail ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-              {event?.title} - Gallery
-            </h1>
-            <p className="text-sm text-gray-500">{event?.description}</p>
-          </div>
-          <div className="mt-4 sm:mt-0 flex space-x-4">
-            <Link
-              href={`/events/${eventId}/upload`}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-            >
-              Upload More Photos
-            </Link>
-            {selectedPhotos.size > 0 && (
-              <button
-                onClick={downloadSelectedPhotos}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
+    <>
+      <PageBackground pageType="gallery" />
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                {event?.title} - Gallery
+              </h1>
+              <p className="text-sm text-gray-500">{event?.description}</p>
+            </div>
+            <div className="mt-4 sm:mt-0 flex space-x-4">
+              <Link
+                href={`/events/${eventId}/upload`}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
               >
-                Download Selected ({selectedPhotos.size})
-              </button>
-            )}
+                Upload More Photos
+              </Link>
+              {selectedPhotos.size > 0 && (
+                <button
+                  onClick={downloadSelectedPhotos}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
+                >
+                  Download Selected ({selectedPhotos.size})
+                </button>
+              )}
+            </div>
           </div>
-        </div>
 
-        {photos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {photos.map((photo, index) => (
-              <div
-                key={photo.id}
-                className={`relative aspect-square group cursor-pointer ${
-                  selectedPhotos.has(photo.id) ? 'ring-4 ring-blue-500' : ''
-                }`}
-                onClick={() => togglePhotoSelection(photo.id)}
-                onDoubleClick={() => openFullscreen(index)}
-              >
-                <img
-                  src={photo.url}
-                  alt="Event photo"
-                  className="absolute inset-0 w-full h-full object-cover rounded-lg"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-200 rounded-lg">
-                  <div className="absolute top-2 right-2">
-                    <div className={`w-6 h-6 rounded-full border-2 ${
-                      selectedPhotos.has(photo.id)
-                        ? 'bg-blue-500 border-blue-500'
-                        : 'border-white bg-opacity-50'
-                    }`}>
-                      {selectedPhotos.has(photo.id) && (
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
+          {photos.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {photos.map((photo, index) => (
+                <div
+                  key={photo.id}
+                  className={`relative aspect-square group cursor-pointer ${
+                    selectedPhotos.has(photo.id) ? 'ring-4 ring-blue-500' : ''
+                  }`}
+                  onClick={() => togglePhotoSelection(photo.id)}
+                  onDoubleClick={() => openFullscreen(index)}
+                >
+                  <img
+                    src={photo.url}
+                    alt="Event photo"
+                    className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-200 rounded-lg">
+                    <div className="absolute top-2 right-2">
+                      <div className={`w-6 h-6 rounded-full border-2 ${
+                        selectedPhotos.has(photo.id)
+                          ? 'bg-blue-500 border-blue-500'
+                          : 'border-white bg-opacity-50'
+                      }`}>
+                        {selectedPhotos.has(photo.id) && (
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No photos uploaded yet</p>
-            <Link
-              href={`/events/${eventId}/upload`}
-              className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-            >
-              Upload Photos
-            </Link>
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No photos uploaded yet</p>
+              <Link
+                href={`/events/${eventId}/upload`}
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+              >
+                Upload Photos
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 } 

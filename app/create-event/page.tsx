@@ -9,6 +9,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import PageBackground from '../components/PageBackground';
 
 const eventTypes = [
   'Wedding',
@@ -139,140 +140,143 @@ export default function CreateEvent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
-            Create New Event
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">
-            Fill in the details below to create your event and generate a QR code for photo uploads
-          </p>
-        </div>
+    <>
+      <PageBackground pageType="create" />
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
+              Create New Event
+            </h1>
+            <p className="mt-2 text-sm sm:text-base text-gray-600">
+              Fill in the details below to create your event and generate a QR code for photo uploads
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
-              <input
-                {...register('title')}
-                className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                type="text"
-                placeholder="Enter event title"
-              />
-              {errors.title && (
-                <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Event Type</label>
-              <select
-                {...register('eventType')}
-                className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-white"
-              >
-                {eventTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-              {errors.eventType && (
-                <p className="text-red-500 text-sm mt-1">{errors.eventType.message}</p>
-              )}
-            </div>
-
-            {showCustomType && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 sm:p-8 rounded-lg shadow-sm">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Custom Event Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
                 <input
-                  {...register('customEventType')}
+                  {...register('title')}
                   className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   type="text"
-                  placeholder="Enter custom event type"
+                  placeholder="Enter event title"
                 />
-                {errors.customEventType && (
-                  <p className="text-red-500 text-sm mt-1">{errors.customEventType.message}</p>
+                {errors.title && (
+                  <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
                 )}
               </div>
-            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea
-                {...register('description')}
-                className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                rows={4}
-                placeholder="Describe your event"
-              />
-              {errors.description && (
-                <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-              <input
-                {...register('date')}
-                className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                type="datetime-local"
-              />
-              {errors.date && (
-                <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-              <input
-                {...register('location')}
-                className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                type="text"
-                placeholder="Enter event location"
-              />
-              {errors.location && (
-                <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="memory-button w-full"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {isLoading ? 'Creating...' : 'Create Event'}
-            </button>
-          </form>
-
-          {eventId && (
-            <div className="bg-white p-6 sm:p-8 rounded-lg shadow-sm flex flex-col items-center justify-center">
-              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">Event QR Code</h2>
-              <div ref={qrCodeRef} className="bg-white p-4 rounded-lg shadow-sm">
-                <QRCodeSVG
-                  value={`${process.env.NEXT_PUBLIC_APP_URL}/events/${eventId}/upload`}
-                  size={200}
-                  className="w-48 h-48 sm:w-56 sm:h-56"
-                />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Event Type</label>
+                <select
+                  {...register('eventType')}
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-white"
+                >
+                  {eventTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                {errors.eventType && (
+                  <p className="text-red-500 text-sm mt-1">{errors.eventType.message}</p>
+                )}
               </div>
-              <p className="text-center mt-6 text-sm sm:text-base text-gray-600 max-w-xs">
-                Scan this QR code to upload photos to the event
-              </p>
+
+              {showCustomType && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Custom Event Type</label>
+                  <input
+                    {...register('customEventType')}
+                    className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                    type="text"
+                    placeholder="Enter custom event type"
+                  />
+                  {errors.customEventType && (
+                    <p className="text-red-500 text-sm mt-1">{errors.customEventType.message}</p>
+                  )}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  {...register('description')}
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                  rows={4}
+                  placeholder="Describe your event"
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <input
+                  {...register('date')}
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                  type="datetime-local"
+                />
+                {errors.date && (
+                  <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input
+                  {...register('location')}
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                  type="text"
+                  placeholder="Enter event location"
+                />
+                {errors.location && (
+                  <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+                )}
+              </div>
+
               <button
-                onClick={handleDownloadQR}
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                type="submit"
+                disabled={isLoading}
+                className="memory-button w-full"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                Download QR Code
+                {isLoading ? 'Creating...' : 'Create Event'}
               </button>
-            </div>
-          )}
+            </form>
+
+            {eventId && (
+              <div className="bg-white p-6 sm:p-8 rounded-lg shadow-sm flex flex-col items-center justify-center">
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">Event QR Code</h2>
+                <div ref={qrCodeRef} className="bg-white p-4 rounded-lg shadow-sm">
+                  <QRCodeSVG
+                    value={`${process.env.NEXT_PUBLIC_APP_URL}/events/${eventId}/upload`}
+                    size={200}
+                    className="w-48 h-48 sm:w-56 sm:h-56"
+                  />
+                </div>
+                <p className="text-center mt-6 text-sm sm:text-base text-gray-600 max-w-xs">
+                  Scan this QR code to upload photos to the event
+                </p>
+                <button
+                  onClick={handleDownloadQR}
+                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download QR Code
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 } 

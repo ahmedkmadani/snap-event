@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { addDoc, collection } from 'firebase/firestore';
 import { storage, db } from '@/lib/firebase';
+import PageBackground from '../../../components/PageBackground';
 
 type UploadingFile = {
   file: File;
@@ -135,166 +136,169 @@ export default function UploadPhoto() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
-            Upload Event Photos
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">
-            Share your memories by uploading photos from the event
-          </p>
-        </div>
+    <>
+      <PageBackground pageType="upload" />
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
+              Upload Event Photos
+            </h1>
+            <p className="mt-2 text-sm sm:text-base text-gray-600">
+              Share your memories by uploading photos from the event
+            </p>
+          </div>
 
-        {uploadSummary.show && (
-          <div className="mb-8">
-            <div className={`rounded-lg p-4 ${uploadSummary.failed === 0 ? 'bg-green-50' : uploadSummary.successful === 0 ? 'bg-red-50' : 'bg-yellow-50'}`}>
-              <div className="flex items-center">
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${uploadSummary.failed === 0 ? 'bg-green-100' : uploadSummary.successful === 0 ? 'bg-red-100' : 'bg-yellow-100'}`}>
-                  {uploadSummary.failed === 0 ? (
-                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : uploadSummary.successful === 0 ? (
-                    <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                  )}
-                </div>
-                <div className="ml-4">
-                  <h3 className={`text-lg font-medium ${uploadSummary.failed === 0 ? 'text-green-800' : uploadSummary.successful === 0 ? 'text-red-800' : 'text-yellow-800'}`}>
-                    Upload Complete
-                  </h3>
-                  <div className="mt-1">
-                    <p className={`text-sm ${uploadSummary.failed === 0 ? 'text-green-700' : uploadSummary.successful === 0 ? 'text-red-700' : 'text-yellow-700'}`}>
-                      Successfully uploaded {uploadSummary.successful} of {uploadSummary.total} images
-                      {uploadSummary.failed > 0 && ` (${uploadSummary.failed} failed)`}
-                    </p>
+          {uploadSummary.show && (
+            <div className="mb-8">
+              <div className={`rounded-lg p-4 ${uploadSummary.failed === 0 ? 'bg-green-50' : uploadSummary.successful === 0 ? 'bg-red-50' : 'bg-yellow-50'}`}>
+                <div className="flex items-center">
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${uploadSummary.failed === 0 ? 'bg-green-100' : uploadSummary.successful === 0 ? 'bg-red-100' : 'bg-yellow-100'}`}>
+                    {uploadSummary.failed === 0 ? (
+                      <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : uploadSummary.successful === 0 ? (
+                      <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="ml-4">
+                    <h3 className={`text-lg font-medium ${uploadSummary.failed === 0 ? 'text-green-800' : uploadSummary.successful === 0 ? 'text-red-800' : 'text-yellow-800'}`}>
+                      Upload Complete
+                    </h3>
+                    <div className="mt-1">
+                      <p className={`text-sm ${uploadSummary.failed === 0 ? 'text-green-700' : uploadSummary.successful === 0 ? 'text-red-700' : 'text-yellow-700'}`}>
+                        Successfully uploaded {uploadSummary.successful} of {uploadSummary.total} images
+                        {uploadSummary.failed > 0 && ` (${uploadSummary.failed} failed)`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="ml-auto pl-3">
+                    <button
+                      onClick={resetUploads}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      Upload More Photos
+                    </button>
                   </div>
                 </div>
-                <div className="ml-auto pl-3">
-                  <button
-                    onClick={resetUploads}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    Upload More Photos
-                  </button>
-                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className="max-w-3xl mx-auto">
-          <div 
-            className={`bg-white p-6 sm:p-8 rounded-lg shadow-sm ${
-              isDragging ? 'border-2 border-blue-500 bg-blue-50' : ''
-            }`}
-          >
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              className="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-10 text-center"
+          <div className="max-w-3xl mx-auto">
+            <div 
+              className={`bg-white p-6 sm:p-8 rounded-lg shadow-sm ${
+                isDragging ? 'border-2 border-blue-500 bg-blue-50' : ''
+              }`}
             >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => handleFiles(e.target.files)}
-                className="hidden"
-                id="photo-upload"
-              />
-              <label
-                htmlFor="photo-upload"
-                className="cursor-pointer block"
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-10 text-center"
               >
-                <div className="space-y-4">
-                  <div className="text-5xl sm:text-6xl mb-4">📸</div>
-                  <p className="text-base sm:text-lg font-medium text-gray-900">
-                    Click or drag images here to upload
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Supported formats: JPG, PNG, GIF
-                  </p>
-                </div>
-              </label>
-            </div>
-
-            {uploadingFiles.length > 0 && (
-              <div className="mt-8 space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    Selected Images ({uploadingFiles.length})
-                  </h3>
-                  <button
-                    onClick={uploadAllFiles}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-                  >
-                    Upload All
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {uploadingFiles.map((file, index) => (
-                    <div key={index} className="relative bg-gray-50 p-4 rounded-lg">
-                      <img
-                        src={file.preview}
-                        alt="Preview"
-                        className="w-full h-48 object-cover rounded-lg"
-                      />
-                      <div className="mt-2">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {file.file.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {(file.file.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
-
-                      {file.uploading && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                        </div>
-                      )}
-
-                      {file.completed && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-                          <div className="bg-white rounded-full p-2">
-                            <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      )}
-
-                      {!file.uploading && !file.completed && (
-                        <button
-                          onClick={() => removeFile(index)}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      )}
-
-                      {file.error && (
-                        <p className="text-xs text-red-500 mt-1">{file.error}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => handleFiles(e.target.files)}
+                  className="hidden"
+                  id="photo-upload"
+                />
+                <label
+                  htmlFor="photo-upload"
+                  className="cursor-pointer block"
+                >
+                  <div className="space-y-4">
+                    <div className="text-5xl sm:text-6xl mb-4">📸</div>
+                    <p className="text-base sm:text-lg font-medium text-gray-900">
+                      Click or drag images here to upload
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Supported formats: JPG, PNG, GIF
+                    </p>
+                  </div>
+                </label>
               </div>
-            )}
+
+              {uploadingFiles.length > 0 && (
+                <div className="mt-8 space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      Selected Images ({uploadingFiles.length})
+                    </h3>
+                    <button
+                      onClick={uploadAllFiles}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      Upload All
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {uploadingFiles.map((file, index) => (
+                      <div key={index} className="relative bg-gray-50 p-4 rounded-lg">
+                        <img
+                          src={file.preview}
+                          alt="Preview"
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                        <div className="mt-2">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {file.file.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(file.file.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+
+                        {file.uploading && (
+                          <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                          </div>
+                        )}
+
+                        {file.completed && (
+                          <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                            <div className="bg-white rounded-full p-2">
+                              <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+
+                        {!file.uploading && !file.completed && (
+                          <button
+                            onClick={() => removeFile(index)}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
+
+                        {file.error && (
+                          <p className="text-xs text-red-500 mt-1">{file.error}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 } 

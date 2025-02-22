@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -10,7 +10,9 @@ import { auth } from '@/lib/firebase';
 export default function Navbar() {
   const { user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleLogout = async () => {
     try {
@@ -23,11 +25,13 @@ export default function Navbar() {
 
   if (!user) return null;
 
+  const isEventsPage = pathname && pathname === '/events';
+
   return (
     <nav className="bg-gradient-to-r from-rose-50 to-pink-50 shadow-sm border-b border-pink-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
+          <div className="flex items-center flex-1">
             <Link 
               href="/events" 
               className="flex items-center px-2 py-2 text-rose-600 hover:text-rose-700 transition-colors duration-200"
@@ -37,6 +41,24 @@ export default function Navbar() {
               </svg>
               <span className="text-xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 text-transparent bg-clip-text">SnapEvent</span>
             </Link>
+
+            {isEventsPage && (
+              <div className="ml-4 flex-1 max-w-lg">
+                <input
+                  type="text"
+                  placeholder="Search events..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    // Emit a custom event that the events page can listen to
+                    window.dispatchEvent(new CustomEvent('searchEvents', { 
+                      detail: { searchTerm: e.target.value }
+                    }));
+                  }}
+                  className="w-full px-4 py-2 rounded-full border border-rose-200 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 bg-white/50 backdrop-blur-sm transition-all duration-200 placeholder-rose-400"
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex items-center space-x-4">
@@ -76,7 +98,7 @@ export default function Navbar() {
 
               {isProfileOpen && (
                 <div 
-                  className="origin-top-right absolute right-0 mt-2 w-72 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none transform transition-all duration-200 ease-out"
+                  className="origin-top-right absolute right-0 mt-2 w-72 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none transform transition-all duration-200 ease-out z-50"
                 >
                   <div className="px-4 py-3 text-sm border-b border-rose-100 bg-gradient-to-r from-rose-50 to-pink-50 rounded-t-xl">
                     <p className="font-medium truncate text-gray-900">{user.displayName || 'User'}</p>

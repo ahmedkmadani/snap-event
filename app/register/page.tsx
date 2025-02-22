@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useAuth } from '@/lib/context/AuthContext';
-import EventSlideshow from '../components/EventSlideshow';
+import PageBackground from '../components/PageBackground';
 
 export default function RegisterPage() {
   const { user, loading } = useAuth();
@@ -63,7 +63,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <EventSlideshow />
+      <PageBackground pageType="auth" />
       <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h1 className="text-center text-4xl font-display font-bold bg-gradient-to-r from-memory-600 to-memory-700 text-transparent bg-clip-text mb-2">
