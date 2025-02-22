@@ -49,7 +49,19 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+  			memory: {
+  				50: '#fff1f2',
+  				100: '#ffe4e6',
+  				200: '#fecdd3',
+  				300: '#fda4af',
+  				400: '#fb7185',
+  				500: '#f43f5e',
+  				600: '#e11d48',
+  				700: '#be123c',
+  				800: '#9f1239',
+  				900: '#881337',
+  			},
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -58,6 +70,7 @@ export default {
   		},
   		fontFamily: {
   			sans: ['var(--font-lato)'],
+  			display: ['var(--font-playfair)'],
   		},
   	}
   },
