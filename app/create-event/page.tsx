@@ -249,7 +249,7 @@ export default function CreateEvent() {
               <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">Event QR Code</h2>
               <div ref={qrCodeRef} className="bg-white p-4 rounded-lg shadow-sm">
                 <QRCodeSVG
-                  value={`${process.env.NEXT_PUBLIC_APP_URL}/events/${eventId}/upload`}
+                  value={`https://snap-event-one.vercel.app/events/${eventId}/upload`}
                   size={200}
                   className="w-48 h-48 sm:w-56 sm:h-56"
                 />
