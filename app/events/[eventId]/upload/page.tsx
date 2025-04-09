@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { addDoc, collection } from 'firebase/firestore';
 import { storage, db } from '@/lib/firebase';
+import { useLanguage } from '@/lib/context/LanguageContext';
 
 type UploadingFile = {
   file: File;
@@ -26,6 +27,7 @@ export default function UploadPhoto() {
   const { eventId } = useParams();
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [message, setMessage] = useState('');
   const [uploadSummary, setUploadSummary] = useState<UploadSummary>({
     total: 0,
     successful: 0,
@@ -97,21 +99,50 @@ export default function UploadPhoto() {
       const snapshot = await uploadBytes(storageRef, fileInfo.file);
       const downloadURL = await getDownloadURL(snapshot.ref);
       
-      // Save to Firestore
+      // Save to Firestore with message if exists
       await addDoc(collection(db, 'events', eventId as string, 'photos'), {
         url: downloadURL,
         fileName: fileName,
         uploadedAt: new Date().toISOString(),
+        type: message.trim() ? 'combined' : 'image',
+        ...(message.trim() && { message: message.trim() })
       });
 
       setUploadingFiles(prev => prev.map((f, i) => 
         i === fileIndex ? { ...f, uploading: false, completed: true, progress: 100 } : f
       ));
+
+      // Clear message if this was a combined upload
+      if (message.trim()) {
+        setMessage('');
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Upload failed';
       setUploadingFiles(prev => prev.map((f, i) => 
         i === fileIndex ? { ...f, uploading: false, error: errorMessage } : f
       ));
+    }
+  };
+
+  const uploadMessage = async () => {
+    if (!message.trim()) return;
+
+    try {
+      await addDoc(collection(db, 'events', eventId as string, 'photos'), {
+        message: message.trim(),
+        uploadedAt: new Date().toISOString(),
+        type: 'message'
+      });
+      setMessage('');
+      // Show success message
+      setUploadSummary({
+        total: 1,
+        successful: 1,
+        failed: 0,
+        show: true
+      });
+    } catch (error) {
+      console.error('Error uploading message:', error);
     }
   };
 
@@ -132,6 +163,7 @@ export default function UploadPhoto() {
 
   const resetUploads = () => {
     setUploadingFiles([]);
+    setMessage('');
     setUploadSummary(prev => ({ ...prev, show: false }));
   };
 
@@ -190,12 +222,38 @@ export default function UploadPhoto() {
           </div>
         )}
 
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto space-y-8">
+          {/* Message Input Section */}
+          <div className="bg-white p-6 sm:p-8 rounded-lg shadow-sm">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Add a Congratulatory Message
+            </h3>
+            <div className="space-y-4">
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Write your congratulations or message here..."
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[120px]"
+              />
+              <button
+                onClick={uploadMessage}
+                disabled={!message.trim()}
+                className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Post Message
+              </button>
+            </div>
+          </div>
+
+          {/* Image Upload Section */}
           <div 
             className={`bg-white p-6 sm:p-8 rounded-lg shadow-sm ${
               isDragging ? 'border-2 border-blue-500 bg-blue-50' : ''
             }`}
           >
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Upload Photos
+            </h3>
             <div
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
